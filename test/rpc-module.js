@@ -18,7 +18,7 @@ describe('rpc test', function () {
         var con = net.connect(3000)
         client.pipe(con).pipe(client)
 
-        var remote = client.wrap(['hello'])
+        var remote = client.wrap(['ping'])
         remote.hello('steve', function (err, res) {
             console.log(err, res)
             done()

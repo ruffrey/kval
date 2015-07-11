@@ -1,11 +1,12 @@
 {
   "name": "kval",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "description": "The thoughtless datastore. Easy to use, easy to scale.",
+  "main": "db.js",
   "scripts": {
     "test": "mocha test/**/*.test.js",
-    "start": "nodemon kval.js",
+    "bench": "mocha test/**/*.bench.js",
+    "start": "DEBUG=kval* nodemon kval.js",
     "build": "nexe -r 0.10.39 -i index.js -o build/kval -t build/tmp"
   },
   "author": "",
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "daemon": "^1.1.0",
+    "debug": "^2.2.0",
     "node-lmdb": "^0.3.0",
     "rpc-stream": "^2.1.1",
     "yargs": "^3.15.0"
