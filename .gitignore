@@ -1,0 +1,11 @@
+node_modules
+.DS_Store
+coverage
+*.log
+build
+data
+standalone/tmp
+*.tmp
+*.db
+db
+*.old
