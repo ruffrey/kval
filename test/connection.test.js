@@ -30,7 +30,7 @@ describe('connection', function () {
             ], done);
         });
         it('should connect and send a ping', function (done) {
-            client.methods.ping('yo', function (err, res) {
+            client.ping('yo', function (err, res) {
                 if (err) {
                     return done(err);
                 }
@@ -39,8 +39,27 @@ describe('connection', function () {
                 done();
             });
         });
+        it('should not fail on empty data', function (done) {
+            client.ping('', function (err, res) {
+                if (err) {
+                    return done(err);
+                }
+                res.indexOf('sup').should.not.equal(-1);
+                done();
+            });
+        });
+        it('should truncate anything longer than 50 chars', function (done) {
+            client.ping('-123456789-123456789-123456789-123456789-123456789-123456789', function (err, res) {
+                if (err) {
+                    return done(err);
+                }
+                res.indexOf('sup').should.not.equal(-1);
+                res.length.should.be.lessThan(5 + 50);
+                done();
+            });
+        });
     });
-    describe.only('with a password', function () {
+    describe('with a password', function () {
         beforeEach(function (done) {
             async.series([
                 function (cb) {
@@ -64,12 +83,31 @@ describe('connection', function () {
             ], done);
         });
         it('should connect and send a ping', function (done) {
-            client.methods.ping('yo', function (err, res) {
+            client.ping('yo', function (err, res) {
                 if (err) {
                     return done(err);
                 }
                 res.indexOf('sup').should.not.equal(-1);
                 res.indexOf('yo').should.not.equal(-1);
+                done();
+            });
+        });
+        it('should not fail on empty data', function (done) {
+            client.ping('', function (err, res) {
+                if (err) {
+                    return done(err);
+                }
+                res.indexOf('sup').should.not.equal(-1);
+                done();
+            });
+        });
+        it('should truncate anything longer than 50 chars', function (done) {
+            client.ping('-123456789-123456789-123456789-123456789-123456789-123456789', function (err, res) {
+                if (err) {
+                    return done(err);
+                }
+                res.indexOf('sup').should.not.equal(-1);
+                res.length.should.be.lessThan(5 + 50);
                 done();
             });
         });

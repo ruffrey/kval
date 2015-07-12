@@ -46,7 +46,10 @@ function Client() {
                 .pipe(self._client);
         }
 
-        self.methods = self._client.wrap(self.datastoreMethods);
+        var methods = self._client.wrap(self.datastoreMethods);
+        Object.keys(methods).forEach(function (m) {
+            self[m] = methods[m];
+        });
         self.disconnect = function (cb) {
             debug('disconnecting...');
             self._client.once('end', function () {
