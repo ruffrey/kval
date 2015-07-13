@@ -5,7 +5,8 @@
   "main": "db.js",
   "scripts": {
     "test": "mocha test/**/*.test.js",
-    "coverage": "mocha -r blanket -R html-cov > coverage.html test/**/*.test.js; open coverage.html",
+    "debug-test": "DEBUG=kval* mocha test/**/*.test.js",
+    "cover": "mocha -r blanket -R html-cov > coverage.html test/**/*.test.js; open coverage.html",
     "bench": "mocha test/**/*.bench.js",
     "start": "DEBUG=kval* nodemon kval.js",
     "build": "nexe -r 0.10.39 -i index.js -o build/kval -t build/tmp"

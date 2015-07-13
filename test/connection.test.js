@@ -7,7 +7,7 @@ var async = require('async');
 var db;
 
 describe('connection', function () {
-    describe('without a password', function () {
+    describe('ping without a password', function () {
         beforeEach(function (done) {
             async.series([
                 function (cb) {
@@ -55,7 +55,7 @@ describe('connection', function () {
             });
         });
     });
-    describe('with a password', function () {
+    describe('ping with a password', function () {
         beforeEach(function (done) {
             async.series([
                 function (cb) {

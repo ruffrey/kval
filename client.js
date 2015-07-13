@@ -8,7 +8,9 @@ function Client() {
     var self = this;
     self._client = null;
     self._connection = null;
-    self.datastoreMethods = ['ping'];
+    self.datastoreMethods = ['ping', '_shake'];
+    self.signedKey = '';
+
     self.connect = function (netOptions, callback) {
         debug('connecting...');
         if (netOptions.password) {
@@ -28,20 +30,34 @@ function Client() {
             // Check authorization by generating a random token and ensuring
             // it is decrypted with the password on the other end, then
             // returned as the same token.
-            var token = '';
-            while (token.length < 256) {
-                token += Math.random().toString(36).substring(2);
-            }
-            token = token.substring(0, 256);
-            self.ping(token, function (err, res) {
-                var comparison = [token, res];
+            var token = encryption.getToken();
+            debug('clientToken generated', token);
+            self._shake({ clientToken: token }, function (err, res1) {
                 if (err) { return callback(err); }
-                if (token !== res) {
-                    err = new Error('Auth password is invalid.');
+                debug('handshake 1', res1);
+                if (typeof res1 !== 'object' || res1.clientToken !== token || !res1.dbToken) {
+                    debug('handshake 1 failed');
+                    err = new Error('password failed; invalid auth response from db server');
                     err.status = 401;
-                    return callback(err, comparison);
+                    return callback(err);
                 }
-                callback(null, comparison);
+                debug('signing dbToken', res1.dbToken);
+                encryption.signToken(token, res1.dbToken, function (err, signedKey) {
+                    if (err) { return callback(err); }
+                    debug('got signedKey', signedKey.length, signedKey);
+                    res1.signedKey = signedKey;
+                    self._shake(res1, function (err, res2) {
+                        if (err) { return callback(err); }
+                        var isAcceptable = typeof res2 !== 'object' || res2.clientToken !== token || res1.signedKey !== res2.signedKey;
+                        if (!isAcceptable) {
+                            err = new Error('password failed; invalid auth response on shake two with db server');
+                            err.status = 401;
+                            return callback(err);
+                        }
+                        self.signedKey = res2.signedKey;
+                        callback(null, self.signedKey);
+                    });
+                });
             });
         });
 
@@ -59,10 +75,10 @@ function Client() {
                 if (typeof inputData !== 'string') {
                     inputData = JSON.stringify(inputData);
                 }
-                debug('initial sending data length', inputData.length);
+                debug(m + ' initial sending data length', inputData.length);
                 if (netOptions.password && inputData) {
                     encryption.encrypt(inputData, netOptions.password, function (err, d) {
-                        debug('post encryption data length', inputData.length);
+                        debug(m + ' post encryption data length', inputData.length);
                         inputData = d;
                         doIt();
                     });
@@ -70,23 +86,23 @@ function Client() {
                     doIt();
                 }
                 function doIt() {
-                    debug('sending now', inputData.length)
+                    debug(m + ' sending now', inputData.length)
                     methods[m](inputData, function decryptWrappedClientCallback(err, receivedData) {
                         if (receivedData) {
-                            debug('receved data length', receivedData.length);
+                            debug(m + ' received data length', receivedData.length);
                         }
                         if (!err && netOptions.password && receivedData) {
-                            debug('pre decryption data length', receivedData.length);
+                            debug(m + ' pre decryption data length', receivedData.length);
                             encryption.decrypt(receivedData, netOptions.password, function (err, text) {
                                 if (err) { return callback(err); }
                                 receivedData = text;
-                                debug('post decryption data length', receivedData.length);
+                                debug(m + ' post decryption data length', receivedData.length);
                                 keepGoing();
                             });
                         } else {
                             keepGoing();
                         }
-                        function keepGoing() {
+                        function keepGoing(err) {
                             try {
                                 receivedData = JSON.parse(receivedData);
                             } catch (ignored) { } // just a normal string

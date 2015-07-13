@@ -84,7 +84,7 @@ function Db() {
         });
         steps.push(function startServer(cb) {
             self._net = net.createServer(function (con) {
-                var server = rpc(rpcRoutes(password));
+                var server = rpc(rpcRoutes(password, con));
 
                 function onNetRpcServerStreamError(err) {
                     debug('net error', err.message, err.stack);
