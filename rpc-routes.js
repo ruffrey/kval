@@ -1,12 +1,11 @@
 'use strict';
 var debug = require('debug')('kval-routes');
 var encryption = require('./lib/encryption');
-var algorithm = 'aes-256-ctr';
 
 module.exports = function routeGenerator(password) {
     function res(data, next) {
         if (!password) { next(null, JSON.stringify(data)); }
-        encryption.encrypt(data, algorithm, password, next);
+        encryption.encrypt(data, password, next);
     }
     /**
      * If applicable, decrypt the entire data buffer.
@@ -14,7 +13,7 @@ module.exports = function routeGenerator(password) {
     function route(func) {
         if (!password) { return func; }
         return function decryptWrapper(data, next) {
-            encryption.decrypt(data, algorithm, password, function (err, text) {
+            encryption.decrypt(data, password, function (err, text) {
                 if (err) { return next(err); }
                 try {
                     text = JSON.parse(text);

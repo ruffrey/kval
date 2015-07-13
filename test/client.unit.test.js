@@ -14,4 +14,10 @@ describe('Client', function () {
         c2.asdf = 'mm';
         c1.asdf.should.not.equal(c2.asdf);
     });
+    it('errors when disconnecting before a connection is made', function () {
+        var c = new Client();
+        c.disconnect(function (err) {
+            should.exist(err);
+        });
+    });
 });

@@ -3,7 +3,6 @@ var lmdb = require('node-lmdb');
 var fs = require('fs');
 var net = require('net');
 var rpc = require('rpc-stream');
-var daemon = require('daemon');
 var async = require('async');
 var rpcRoutes = require('./rpc-routes');
 var megabyte = 1024 * 1024 * 1024;
@@ -11,7 +10,7 @@ var debug = require('debug')('kval-db');
 
 function Db() {
     var self = this;
-    self.db = {};
+    self._dbs = {};
     self._env = null;
     self._net = null;
 
@@ -19,18 +18,20 @@ function Db() {
      * Return an object store in the database.
      */
     self.store = function (name) {
-        if (self.db[name]) {
-            return self.db[name];
+        // when already initialized
+        if (self._dbs[name]) {
+            return self._dbs[name];
         }
-        self.db[name] = env.openDbi({
+        self._dbs[name] = env.openDbi({
             name: name,
             create: true
         });
-        return self.db[name];
+        return self._dbs[name];
     };
 
     /**
-     * Expose the `net.close` method, for shutting down the server.
+     * Expose the `net.close` method, for shutting down the server. Overwritten
+     * after connecting.
      */
     self.close = function (cb) {
         cb(new Error('Socket has not been opened, so cannot be closed.'));
@@ -45,7 +46,6 @@ function Db() {
      * @params int options.port=9226 - Listen on port
      * @params string options.host=127.0.0.1 - Listen on host(s)
      * @params string options.password - A pre-shared password
-     * @params bool options.daemonize=false
      * @params function callback=`function (err) { }`
      */
     self.initialize = function (options, callback) {
@@ -56,9 +56,8 @@ function Db() {
         var envOptions = {
             path: options.path || __dirname + "/db",
             mapSize: options.mapSize || 100 * megabyte, // maximum database size
-            maxDbs: options.maxDbs || 3
+            maxDbs: options.maxDbs || 12
         };
-        var daemonize = !!options.daemonize;
         var port = options.port || 9226;
         var host = options.host || '127.0.0.1';
         var password = options.password;
@@ -96,23 +95,8 @@ function Db() {
                 server.pipe(con).pipe(server);
             });
 
-            self._net.listen(port, host, function (err) {
-                if (err) {
-                    return cb(err);
-                }
-                if (daemonize) {
-                    daemon();
-                    debug('running as daemon pid', process.pid);
-                } else {
-                    debug('running as pid', process.pid);
-                }
-                cb();
-            });
-
-            self._net.once('error', function (err) {
-                callback(err);
-                self._net.on('error', debug);
-            });
+            self._net.listen(port, host, cb);
+            self._net.once('error', cb);
 
             // Expose the method to shut down the socket
             self.close = function (cb) {

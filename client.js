@@ -3,7 +3,6 @@ var rpc = require('rpc-stream');
 var net = require('net');
 var debug = require('debug')('kval-client');
 var encryption = require('./lib/encryption');
-var algorithm = 'aes-256-ctr';
 
 function Client() {
     var self = this;
@@ -62,7 +61,7 @@ function Client() {
                 }
                 debug('initial sending data length', inputData.length);
                 if (netOptions.password && inputData) {
-                    encryption.encrypt(inputData, algorithm, netOptions.password, function (err, d) {
+                    encryption.encrypt(inputData, netOptions.password, function (err, d) {
                         debug('post encryption data length', inputData.length);
                         inputData = d;
                         doIt();
@@ -78,7 +77,7 @@ function Client() {
                         }
                         if (!err && netOptions.password && receivedData) {
                             debug('pre decryption data length', receivedData.length);
-                            encryption.decrypt(receivedData, algorithm, netOptions.password, function (err, text) {
+                            encryption.decrypt(receivedData, netOptions.password, function (err, text) {
                                 if (err) { return callback(err); }
                                 receivedData = text;
                                 debug('post decryption data length', receivedData.length);
