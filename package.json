@@ -1,6 +1,6 @@
 {
   "name": "kval",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The thoughtless datastore. Easy to use, easy to scale.",
   "main": "db.js",
   "scripts": {
@@ -11,8 +11,14 @@
   },
   "config": {
     "blanket": {
-      "pattern": ["**/*.js"],
-      "data-cover-never": ["node_modules", "test", "kval.js"]
+      "pattern": [
+        "**/*.js"
+      ],
+      "data-cover-never": [
+        "node_modules",
+        "test",
+        "kval.js"
+      ]
     }
   },
   "author": "",
