@@ -34,27 +34,23 @@ describe('connection', function () {
                 if (err) {
                     return done(err);
                 }
-                res.indexOf('sup').should.not.equal(-1);
-                res.indexOf('yo').should.not.equal(-1);
+                res.should.equal('yo');
                 done();
             });
         });
         it('should not fail on empty data', function (done) {
-            client.ping('', function (err, res) {
-                if (err) {
-                    return done(err);
-                }
-                res.indexOf('sup').should.not.equal(-1);
-                done();
-            });
+            client.ping(null, done);
         });
-        it('should truncate anything longer than 50 chars', function (done) {
-            client.ping('-123456789-123456789-123456789-123456789-123456789-123456789', function (err, res) {
+        it('should truncate anything longer than 256 chars', function (done) {
+            var str = '-123456789';
+            while (str.length < 400) {
+                str += str;
+            }
+            client.ping(str, function (err, res) {
                 if (err) {
                     return done(err);
                 }
-                res.indexOf('sup').should.not.equal(-1);
-                res.length.should.be.lessThan(5 + 50);
+                res.length.should.equal(256);
                 done();
             });
         });
@@ -87,8 +83,7 @@ describe('connection', function () {
                 if (err) {
                     return done(err);
                 }
-                res.indexOf('sup').should.not.equal(-1);
-                res.indexOf('yo').should.not.equal(-1);
+                res.should.equal('yo');
                 done();
             });
         });
@@ -97,17 +92,20 @@ describe('connection', function () {
                 if (err) {
                     return done(err);
                 }
-                res.indexOf('sup').should.not.equal(-1);
+                res.should.equal('');
                 done();
             });
         });
-        it('should truncate anything longer than 50 chars', function (done) {
-            client.ping('-123456789-123456789-123456789-123456789-123456789-123456789', function (err, res) {
+        it('should truncate anything longer than 256 chars', function (done) {
+            var str = '-123456789';
+            while (str.length < 400) {
+                str += str;
+            }
+            client.ping(str, function (err, res) {
                 if (err) {
                     return done(err);
                 }
-                res.indexOf('sup').should.not.equal(-1);
-                res.length.should.be.lessThan(5 + 50);
+                res.length.should.equal(256);
                 done();
             });
         });

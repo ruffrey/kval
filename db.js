@@ -3,22 +3,11 @@ var lmdb = require('node-lmdb');
 var fs = require('fs');
 var net = require('net');
 var rpc = require('rpc-stream');
-// var zlib = require('zlib');
-// var unzip = zlib.createGunzip();
-// var zip = zlib.createGzip();
-// var encryption = require('./lib/encryption');
-var crypto = require('crypto');
-var algorithm = 'aes-256-ctr';
 var daemon = require('daemon');
 var async = require('async');
+var rpcRoutes = require('./rpc-routes');
 var megabyte = 1024 * 1024 * 1024;
 var debug = require('debug')('kval-db');
-var stream = require('stream');
-var middleware = new stream.Transform();
-middleware._transform =  function (chunk, encoding, callback) {
-    console.log(chunk.toString());
-    callback(null, chunk);
-};
 
 function Db() {
     var self = this;
@@ -30,7 +19,9 @@ function Db() {
      * Return an object store in the database.
      */
     self.store = function (name) {
-        if (self.db[name]) { return self.db[name]; }
+        if (self.db[name]) {
+            return self.db[name];
+        }
         self.db[name] = env.openDbi({
             name: name,
             create: true
@@ -71,14 +62,10 @@ function Db() {
         var port = options.port || 9226;
         var host = options.host || '127.0.0.1';
         var password = options.password;
-        var encrypt;
-        var decrypt;
 
         // Setup stuff
         if (password) {
             debug('with encryption');
-            decrypt = crypto.createDecipher(algorithm, password);
-            encrypt = crypto.createCipher(algorithm, password);
         } else {
             debug('no encryption');
         }
@@ -98,25 +85,15 @@ function Db() {
         });
         steps.push(function startServer(cb) {
             self._net = net.createServer(function (con) {
-                var server = rpc({
-                    ping: function (data, next) {
-                        var shortenedMessage = data.substring(0, 50);
-                        debug('ping', shortenedMessage);
-                        // prevent giant pings
-                        next(null, 'sup ' + shortenedMessage);
-                    }
-                });
-                if (encrypt && decrypt) {
-                    server
-                        .pipe(decrypt)
-                        .pipe(con)
-                        .pipe(encrypt)
-                        .pipe(server);
-                } else {
-                    server
-                        .pipe(con)
-                        .pipe(server);
+                var server = rpc(rpcRoutes(password));
+
+                function onNetRpcServerStreamError(err) {
+                    debug('net error', err.message, err.stack);
                 }
+                con.on('error', onNetRpcServerStreamError);
+                server.on('error', onNetRpcServerStreamError);
+
+                server.pipe(con).pipe(server);
             });
 
             self._net.listen(port, host, function (err) {
@@ -132,7 +109,10 @@ function Db() {
                 cb();
             });
 
-            self._net.once('error', callback);
+            self._net.once('error', function (err) {
+                callback(err);
+                self._net.on('error', debug);
+            });
 
             // Expose the method to shut down the socket
             self.close = function (cb) {
