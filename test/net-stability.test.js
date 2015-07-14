@@ -69,7 +69,19 @@ describe('net stability', function () {
     // it('should not fail when server has no password', function (done) {
     //
     // });
-    // it('should not fail when client has no password', function (done) {
-    //
-    // });
+    it('should not fail when client has no password', function (done) {
+        var c = new Client();
+        c.connect({
+            host: '127.0.0.1',
+            port: 9226
+        }, function (err) {
+            should.not.exist(err);
+            c.ping('hey', function (err, res) {
+                should.exist(err);
+                should.exist(err.status);
+                err.status.should.equal(401);
+                c.disconnect(done);
+            });
+        });
+    });
 });

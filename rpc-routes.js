@@ -11,10 +11,18 @@ module.exports = function routeGenerator(password, con) {
     }
     /**
      * If applicable, decrypt the entire data buffer.
+     * When there is a pre-shared password, and auth is required on the route,
+     * return a non-encrypted message to the client that indicates it is
+     * unauthenticated.
      */
-    function route(func) {
+    function route(func, noAuthRequired) {
         if (!password) { return func; }
         return function decryptWrapper(data, next) {
+            // Auth check
+            if (!noAuthRequired && !con.signedKey) {
+                return next(null, { error: 'Unauthenticated request.', status: 401 });
+            }
+
             debug('decrypting incoming message length', data.length)
             encryption.decrypt(data, password, function (err, text) {
                 if (err) { return next(err); }
@@ -38,7 +46,11 @@ module.exports = function routeGenerator(password, con) {
         }),
         // Authentication handshake route, called 2x
         _shake: route(function shake1(data, next) {
-            if (typeof data !== 'object') { return next(new Error('Invalid shake')); }
+            if (typeof data !== 'object') {
+                var err = new Error('Invalid shake - password incorrect');
+                err.status = 401;
+                return next(err);
+            }
             var isSecondShake = con.clientToken && con.dbToken && data.signedKey;
             if (!con.clientToken && !data.clientToken) {
                 return callback(new Error('Missing client auth credential token'));
@@ -62,6 +74,6 @@ module.exports = function routeGenerator(password, con) {
                 con.signedKey = signedKey;
                 res({ ok: true }, next);
             });
-        })
+        }, true)
     };
 };

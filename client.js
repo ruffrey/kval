@@ -102,11 +102,20 @@ function Client() {
                         } else {
                             keepGoing();
                         }
-                        function keepGoing(err) {
+                        function keepGoing() {
+                            if (err) { return callback(err); }
                             try {
                                 receivedData = JSON.parse(receivedData);
                             } catch (ignored) { } // just a normal string
-                            callback(err, receivedData);
+
+                            // Format for returning non-connection related errors.
+                            // Construct an error from it.
+                            if (receivedData.error) {
+                                err = new Error(receivedData.error);
+                                err.status = receivedData.status; // optional
+                                return callback(err);
+                            }
+                            callback(null, receivedData);
                         }
                     });
                 }

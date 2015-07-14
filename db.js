@@ -8,6 +8,10 @@ var rpcRoutes = require('./rpc-routes');
 var megabyte = 1024 * 1024 * 1024;
 var debug = require('debug')('kval-db');
 
+/**
+ * The database management system object.
+ * TODO: rename to `Dbms`
+ */
 function Db() {
     var self = this;
     self._dbs = {};
