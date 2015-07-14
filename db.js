@@ -7,6 +7,7 @@ var async = require('async');
 var rpcRoutes = require('./rpc-routes');
 var megabyte = 1024 * 1024 * 1024;
 var debug = require('debug')('kval-db');
+var Model = require('./model');
 
 /**
  * The database management system object.
@@ -19,17 +20,14 @@ function Db() {
     self._net = null;
 
     /**
-     * Return an object store in the database.
+     * Instantiate and return an object Model store.
      */
-    self.store = function (name) {
+    self.model = function (name, schema) {
         // when already initialized
         if (self._dbs[name]) {
             return self._dbs[name];
         }
-        self._dbs[name] = env.openDbi({
-            name: name,
-            create: true
-        });
+        self._dbs[name] = new Model(self._env, schema);
         return self._dbs[name];
     };
 

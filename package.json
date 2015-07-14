@@ -23,7 +23,7 @@
       ]
     }
   },
-  "author": "",
+  "author": "Jeff Parrish <jeffhparrish@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": "0.10.39"
