@@ -90,6 +90,7 @@ function Db() {
 
                 function onNetRpcServerStreamError(err) {
                     debug('net error', err.message, err.stack);
+                    con.destroy();
                 }
                 con.on('error', onNetRpcServerStreamError);
                 server.on('error', onNetRpcServerStreamError);

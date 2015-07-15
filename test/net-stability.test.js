@@ -8,6 +8,7 @@ var client;
 var async = require('async');
 var db;
 var fs = require('fs');
+var http = require('http');
 describe('net stability', function () {
     beforeEach(function (done) {
         async.series([
@@ -31,7 +32,7 @@ describe('net stability', function () {
             function (cb) { db.close(cb); }
         ], done);
     });
-    it('should not fail on receiving null', function (done) {
+    it('db should not fail on receiving null ping', function (done) {
         client.ping(null, function (err, res) {
             if (err) {
                 return done(err);
@@ -40,7 +41,7 @@ describe('net stability', function () {
             done();
         });
     });
-    it('should not fail on huge string', function (done) {
+    it('db should not fail on huge string', function (done) {
         var str = '';
         while (str.length < 1000000) {
             str += Math.random().toString(36).substring(2);
@@ -53,7 +54,7 @@ describe('net stability', function () {
             done();
         });
     });
-    it('should give a usable error when passwords mismatch', function (done) {
+    it('client should give a usable error when passwords mismatch', function (done) {
         var c = new Client();
         c.connect({
             host: '127.0.0.1',
@@ -66,9 +67,20 @@ describe('net stability', function () {
             c.disconnect(done);
         });
     });
-    // it('should not fail when server has no password', function (done) {
-    //
-    // });
+    it('db should not die upon receiving HTTP request to telnet server', function (done) {
+        http.get('http://127.0.0.1:9226/')
+            .on('error', function (err) {
+                err.code.should.equal('ECONNRESET');
+            });
+        setTimeout(function () {
+            client.ping('hey there', function (err, data) {
+                should.not.exist(err);
+                should.exist(data);
+                data.should.equal('hey there');
+                done();
+            });
+        }, 500);
+    });
     it('should not fail when client has no password', function (done) {
         var c = new Client();
         c.connect({
