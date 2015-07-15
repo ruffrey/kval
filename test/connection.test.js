@@ -1,7 +1,7 @@
 'use strict';
 var should = require('should');
-var Db = require('../db');
-var Client = require('../client');
+var Db = require('../lib/dbms/dbms');
+var Client = require('../lib/client/client');
 var client;
 var async = require('async');
 var db;

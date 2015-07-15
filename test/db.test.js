@@ -1,6 +1,6 @@
 'use strict';
 var should = require('should');
-var Db = require('../db');
+var Db = require('../lib/dbms/dbms');
 var fs = require('fs');
 var rimraf = require('rimraf');
 var path = require('path');

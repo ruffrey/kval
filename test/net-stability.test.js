@@ -1,7 +1,7 @@
 'use strict';
 var should = require('should');
-var Db = require('../db');
-var Client = require('../client');
+var Db = require('../lib/dbms/dbms');
+var Client = require('../lib/client/client');
 var net = require('net');
 var http = require('http');
 var client;
@@ -9,6 +9,7 @@ var async = require('async');
 var db;
 var fs = require('fs');
 var http = require('http');
+
 describe('net stability', function () {
     beforeEach(function (done) {
         async.series([

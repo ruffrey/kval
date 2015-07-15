@@ -1,7 +1,8 @@
 'use strict';
 var should = require('should');
-var Client = require('../client');
+var Client = require('../lib/client/client');
 var async = require('async');
+
 describe('Client', function () {
     it('exposes expected things', function () {
         var c1 = new Client();
