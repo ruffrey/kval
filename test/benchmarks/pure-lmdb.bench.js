@@ -15,13 +15,16 @@ env.open({
     maxDbs: 10
 });
 var dbi;
+var dbi1;
+var dbi2;
+var dbi3;
 
 describe('lmdb driver', function () {
     this.timeout(10000);
     after(function () {
-        fs.unlinkSync(dbpath + '/data.mdb');
-        fs.unlinkSync(dbpath + '/lock.mdb');
-        fs.rmdir(dbpath);
+        // fs.unlinkSync(dbpath + '/data.mdb');
+        // fs.unlinkSync(dbpath + '/lock.mdb');
+        // fs.rmdir(dbpath);
     });
     describe('asynchronous', function () {
         before(function () {
@@ -73,6 +76,34 @@ describe('lmdb driver', function () {
                 txn.putString(dbi, "ello" + i, "Hello world!");
             }
             txn.commit();
+        });
+    });
+    describe.only('multiple dbs', function () {
+        before(function () {
+            dbi1 = env.openDbi({
+                name: 'db1',
+                create: true
+            });
+            dbi2 = env.openDbi({
+                name: 'db2',
+                create: true
+            });
+            dbi3 = env.openDbi({
+                name: 'db3',
+                create: true
+            });
+        });
+        after(function () {
+            dbi1.close();
+            dbi2.close();
+            dbi3.close();
+        });
+        it('opens and writes to multiple simultaneous dbs', function () {
+            var tx = env.beginTxn();
+            tx.putString(dbi1, encryption.uid(), 'hi1');
+            tx.putString(dbi2, encryption.uid(), 'hi2');
+            tx.putString(dbi3, encryption.uid(), 'hi3');
+            tx.commit();
         });
     });
 });
