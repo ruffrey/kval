@@ -1,6 +1,7 @@
 var lmdb = require('node-lmdb');
 var env = new lmdb.Env();
 var path = require('path');
+var async = require('async');
 var encryption = require('../../lib/encryption');
 var dbpath = path.join(__dirname, '/../../db/', encryption.uid());
 var fs = require('fs');
@@ -19,12 +20,12 @@ var dbi1;
 var dbi2;
 var dbi3;
 
-describe('lmdb driver', function () {
+describe.only('lmdb driver', function () {
     this.timeout(10000);
     after(function () {
-        // fs.unlinkSync(dbpath + '/data.mdb');
-        // fs.unlinkSync(dbpath + '/lock.mdb');
-        // fs.rmdir(dbpath);
+        fs.unlinkSync(dbpath + '/data.mdb');
+        fs.unlinkSync(dbpath + '/lock.mdb');
+        fs.rmdir(dbpath);
     });
     describe('asynchronous', function () {
         before(function () {
@@ -44,7 +45,7 @@ describe('lmdb driver', function () {
             txn.commit();
             env.sync(done);
         });
-        it('writes 2 million times', function (done) {
+        it('writes 2 million times in one commit/sync', function (done) {
             // Begin transaction
             var txn = env.beginTxn();
             for (var i = 0; i < 2000000; i++) {
@@ -52,6 +53,17 @@ describe('lmdb driver', function () {
             }
             txn.commit();
             env.sync(done);
+        });
+        // This is so slow that is is not even worth doing. It takes forever
+        // and seems to block the thread. I have never run it to completion.
+        xit('writes 2 million times in 2 million commits/syncs', function (done) {
+            // Begin transaction
+            async.times(2000000, function (i, cb) {
+                var txn = env.beginTxn();
+                txn.putString(dbi, "ello" + i, "Hello world!");
+                txn.commit();
+                env.sync(cb);
+            }, done);
         });
     });
     describe('synchronous', function () {
@@ -78,7 +90,7 @@ describe('lmdb driver', function () {
             txn.commit();
         });
     });
-    describe.only('multiple dbs', function () {
+    describe('multiple dbs', function () {
         before(function () {
             dbi1 = env.openDbi({
                 name: 'db1',

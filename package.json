@@ -8,7 +8,7 @@
     "debug-test": "DEBUG=kval* mocha test/**/*.test.js",
     "cover": "mocha -r blanket -R html-cov > coverage.html test/**/*.test.js; open coverage.html",
     "bench": "mocha test/**/*.bench.js",
-    "start": "DEBUG=kval* nodemon kval.js",
+    "start": "DEBUG=kval* nodemon kval.js --webapp=3008 --password=asdf",
     "build": "nexe -r 0.10.39 -i index.js -o build/kval -t build/tmp"
   },
   "config": {
@@ -29,9 +29,15 @@
     "node": "0.10.39"
   },
   "dependencies": {
+    "body-parser": "^1.13.2",
+    "compression": "^1.5.1",
+    "connect": "^3.4.0",
+    "connect-route": "^0.1.5",
     "debug": "^2.2.0",
     "node-lmdb": "^0.3.0",
+    "qs": "^4.0.0",
     "rpc-stream": "^2.1.1",
+    "serve-static": "^1.10.0",
     "yargs": "^3.15.0"
   },
   "devDependencies": {

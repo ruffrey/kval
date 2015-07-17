@@ -15,7 +15,7 @@ var Model = required.Model;
 var client;
 
 describe('normal client usage', function () {
-    describe.only('Model', function () {
+    describe('Model', function () {
         before(function (done) {
             async.series([
                 function (cb) {
