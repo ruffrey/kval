@@ -20,7 +20,7 @@ var dbi1;
 var dbi2;
 var dbi3;
 
-describe.only('lmdb driver', function () {
+describe('lmdb driver', function () {
     this.timeout(10000);
     after(function () {
         fs.unlinkSync(dbpath + '/data.mdb');

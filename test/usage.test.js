@@ -111,10 +111,10 @@ describe('normal client usage', function () {
             var user = new User({ name: 'Bill', age: 32 });
             should.exist(user.id);
             async.waterfall([
-                function (cb) {
+                function saveUser(cb) {
                     user.save(cb);
                 },
-                function (saved, cb) {
+                function checkSavedThenGetIt(saved, cb) {
                     should.exist(saved);
                     should.exist(saved.id);
                     saved.name.should.equal('Bill');
@@ -122,7 +122,7 @@ describe('normal client usage', function () {
                     user.id.should.equal(saved.id);
                     User.findById(saved.id, cb);
                 },
-                function (gotUser, cb) {
+                function checkInDbThenUpdateIt(gotUser, cb) {
                     should.exist(gotUser);
                     should.exist(gotUser.id);
                     user.id.should.equal(gotUser.id);
@@ -130,20 +130,20 @@ describe('normal client usage', function () {
                     gotUser.age = 33;
                     gotUser.save(cb);
                 },
-                function (updatedUser, cb) {
+                function checkUpdatesThenFindAgain(updatedUser, cb) {
                     should.exist(updatedUser);
                     user.id.should.equal(updatedUser.id);
                     updatedUser.age.should.equal(33);
                     User.findById(updatedUser.id, cb);
                 },
-                function (gotUser, cb) {
+                function checkUpdatesInDbThenRemove(gotUser, cb) {
                     should.exist(gotUser);
                     should.exist(gotUser.id);
                     user.id.should.equal(gotUser.id);
                     gotUser.age.should.equal(33);
                     gotUser.remove(cb)
                 },
-                function (cb) {
+                function ensureWasRemoved(cb) {
                     User.findById(user.id, function (err, gotUser) {
                         should.not.exist(err);
                         should.not.exist(gotUser);

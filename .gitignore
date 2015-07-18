@@ -10,3 +10,6 @@ standalone/tmp
 db
 *.old
 tmp
+.nar
+kval
+kval.jx
