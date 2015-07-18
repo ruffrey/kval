@@ -62,6 +62,7 @@ describe('net stability', function () {
             port: 9226,
             password: 'not-matching'
         }, function (err) {
+            console.log('HI', err);
             should.exist(err.status);
             err.status.should.equal(401);
             err.message.indexOf('password').should.not.equal(-1);
@@ -71,7 +72,8 @@ describe('net stability', function () {
     it('db should not die upon receiving HTTP request to telnet server', function (done) {
         http.get('http://127.0.0.1:9226/')
             .on('error', function (err) {
-                err.code.should.equal('ECONNRESET');
+                should.exist(err);
+                err.code.should.equal('HPE_INVALID_CONSTANT');
             });
         setTimeout(function () {
             client.ping('hey there', function (err, data) {
@@ -90,6 +92,7 @@ describe('net stability', function () {
         }, function (err) {
             should.not.exist(err);
             c.ping('hey', function (err, res) {
+                console.log(err, res);
                 should.exist(err);
                 should.exist(err.status);
                 err.status.should.equal(401);
