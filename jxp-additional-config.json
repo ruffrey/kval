@@ -1,9 +1,0 @@
-{
-    "preInstall": [
-        "jx install async",
-        "jx install debug",
-        "jx install node-lmdb",
-        "jx install rpc-stream",
-        "jx install yargs"
-    ]
-}

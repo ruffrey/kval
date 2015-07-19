@@ -1,33 +1,36 @@
 {
 	"name": "kval",
-	"version": "0.6.0",
-	"author": "Jeff Parrish",
+	"version": "1.0",
+	"author": "Jeff H. Parrish",
 	"description": "",
 	"company": "Symbolic Logic",
-	"website": "http://symboliclogic.io",
+	"website": "",
 	"package": null,
 	"startup": "kval.js",
 	"execute": null,
-	"extract": false,
+	"extract": true,
 	"output": "kval.jx",
 	"files": [
 		"kval.js",
+		"lib/client/client.js",
+		"lib/client/doc.js",
+		"lib/client/model.js",
+		"lib/client/rpc-encrypt-wrapper.js",
 		"lib/dbms/dbms.js",
 		"lib/dbms/rpc-routes.js",
-		"lib/encryption.js"
+		"lib/encryption.js",
+		"package.json"
 	],
 	"assets": [],
-	"preinstall": [
-		"echo hi",
-        "jx install async",
-		"echo Hey",
-        "jx install debug",
-        "jx install node-lmdb",
-        "jx install rpc-stream",
-        "jx install yargs"
-    ],
-	"native": true,
+	"preInstall": [
+		"jx install async",
+		"jx install debug",
+		"jx install dnode",
+		"jx install node-lmdb",
+		"jx install yargs"
+	],
 	"library": true,
-	"readme_file": "README.md",
-	"fs_reach_sources": true
+	"native": true,
+	"fs_reach_sources": true,
+	"native": true
 }

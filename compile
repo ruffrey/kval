@@ -1,0 +1,35 @@
+#! /bin/bash
+
+BUILD_FOLDER="build"
+STAGING_FOLDER="tmp"
+OUTPUT_FOLDER="out"
+BUILD_FILES="kval.js,package.json,lib,node_modules/async,node_modules/debug,node_modules/yargs"
+NAME="kval"
+COMPANY="Symbolic Logic"
+AUTHOR="Jeff H. Parrish"
+YEAR=`date +'%Y'`
+
+
+rm -rf $BUILD_FOLDER/$STAGING_FOLDER
+rm -rf $BUILD_FOLDER/$OUTPUT_FOLDER
+
+mkdir -p $BUILD_FOLDER
+
+cp lib $BUILD_FOLDER/$STAGING_FOLDER/lib
+cp package.json $BUILD_FOLDER/$STAGING_FOLDER/package.json
+cp kval.js $BUILD_FOLDER/$STAGING_FOLDER/kval.js
+cp node_modules $BUILD_FOLDER/$STAGING_FOLDER/node_modules
+
+rm -rf node_modules $BUILD_FOLDER/$STAGING_FOLDER/node_modules/dnode
+rm -rf node_modules $BUILD_FOLDER/$STAGING_FOLDER/node_modules/node-lmdb
+
+cd $BUILD_FOLDER/$STAGING_FOLDER
+jx install dnode
+jx install node-lmdb
+
+# will now be in $BUILD_FOLDER
+cd ../
+
+jx package kval.js -name "$NAME" -company "$COMPANY" -author "$AUTHOR" -copyright "$YEAR $AUTHOR" -extract true -native
+
+tar -czf kval.tar.gz kval
