@@ -11,7 +11,7 @@
     "local": "DEBUG=kval* nodemon kval.js --webapp=3008 --password=asdf",
     "start": "DEBUG=kval* node kval.js",
     "webapp": "DEBUG=kval* nodemon kval.js",
-    "compile": "sh compile",
+    "compile": "sudo sh compile",
     "native": "DEBUG=kval* ./kval exec --port=9222 --password=asdf"
   },
   "config": {

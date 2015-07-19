@@ -8,6 +8,7 @@ var Db = require('./lib/dbms/dbms');
 
 function startWorker() {
     process.title = 'kval_worker';
+    console.log('kval worker', argv);
     new Db().initialize(argv, function (err) {
         if (err) { throw err; }
     });

@@ -1,35 +1,25 @@
 #! /bin/bash
 
+set -x
+
 BUILD_FOLDER="build"
-STAGING_FOLDER="tmp"
-OUTPUT_FOLDER="out"
-BUILD_FILES="kval.js,package.json,lib,node_modules/async,node_modules/debug,node_modules/yargs"
+EXCLUDE_FILES="node_modules,db,.git,build,test"
 NAME="kval"
 COMPANY="Symbolic Logic"
 AUTHOR="Jeff H. Parrish"
 YEAR=`date +'%Y'`
 
+rm -rf $BUILD_FOLDER
+mkdir -p $BUILD_FOLDER
 
-# rm -rf $BUILD_FOLDER/$STAGING_FOLDER
-# rm -rf $BUILD_FOLDER/$OUTPUT_FOLDER
+jx package kval.js -name "$NAME" -company "$COMPANY" -author "$AUTHOR" -copyright "$YEAR $AUTHOR" -slim "$EXCLUDE_FILES"
 
-mkdir -p $BUILD_FOLDER/$STAGING_FOLDER
-mkdir -p $BUILD_FOLDER/$OUTPUT_FOLDER
+node compile-update-jxp.js
 
-cp -f -R lib $BUILD_FOLDER/$STAGING_FOLDER/lib
-cp -f package.json $BUILD_FOLDER/$STAGING_FOLDER/package.json
-cp -f kval.js $BUILD_FOLDER/$STAGING_FOLDER/kval.js
+jx compile kval.jxp
 
-cd $BUILD_FOLDER/$STAGING_FOLDER
-jx install async debug dnode node-lmdb yargs
+tar -czf $BUILD_FOLDER/kval.tar.gz kval
 
-# will now be in $BUILD_FOLDER
-cd ../
-rm -f kval.tar.gz
-
-jx package $STAGING_FOLDER/kval.js -name "$NAME" -company "$COMPANY" -author "$AUTHOR" -copyright "$YEAR $AUTHOR" -extract true -native
-
-tar -czf out/kval.tar.gz kval
-mv -f kval ... kval/
-mv -f kval.jx ... kval/
-mv -m kval.jxp ... kval/
+mv kval $BUILD_FOLDER
+mv kval.jx $BUILD_FOLDER
+mv kval.jxp $BUILD_FOLDER
