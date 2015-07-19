@@ -15,7 +15,7 @@ log('read jxp', jxp);
 
 jxp.preInstall = [
     'curl http://jxcore.com/xil.sh | bash -s local',
-    './jx install async debug dnode node-lmdb yargs',
+    './jx install async debug dnode node-lmdb',
     'rm ./jx'
 ];
 log('updated preInstall', jxp.preInstall);
