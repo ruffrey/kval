@@ -29,6 +29,14 @@ function startWorker() {
     });
 }
 startWorker();
+
+// jxcore option
+process.on('restart', function (restartCallback, newExitCode) {
+    // do whatever you want before application's crash
+    // and when you're done - call the callback to restart the process
+    restartCallback();
+});
+
 // if (cluster.isMaster) {
 //     process.title = 'kval_master';
 //     // Fork workers.
