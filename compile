@@ -10,26 +10,26 @@ AUTHOR="Jeff H. Parrish"
 YEAR=`date +'%Y'`
 
 
-rm -rf $BUILD_FOLDER/$STAGING_FOLDER
-rm -rf $BUILD_FOLDER/$OUTPUT_FOLDER
+# rm -rf $BUILD_FOLDER/$STAGING_FOLDER
+# rm -rf $BUILD_FOLDER/$OUTPUT_FOLDER
 
-mkdir -p $BUILD_FOLDER
+mkdir -p $BUILD_FOLDER/$STAGING_FOLDER
+mkdir -p $BUILD_FOLDER/$OUTPUT_FOLDER
 
-cp lib $BUILD_FOLDER/$STAGING_FOLDER/lib
-cp package.json $BUILD_FOLDER/$STAGING_FOLDER/package.json
-cp kval.js $BUILD_FOLDER/$STAGING_FOLDER/kval.js
-cp node_modules $BUILD_FOLDER/$STAGING_FOLDER/node_modules
-
-rm -rf node_modules $BUILD_FOLDER/$STAGING_FOLDER/node_modules/dnode
-rm -rf node_modules $BUILD_FOLDER/$STAGING_FOLDER/node_modules/node-lmdb
+cp -f -R lib $BUILD_FOLDER/$STAGING_FOLDER/lib
+cp -f package.json $BUILD_FOLDER/$STAGING_FOLDER/package.json
+cp -f kval.js $BUILD_FOLDER/$STAGING_FOLDER/kval.js
 
 cd $BUILD_FOLDER/$STAGING_FOLDER
-jx install dnode
-jx install node-lmdb
+jx install async debug dnode node-lmdb yargs
 
 # will now be in $BUILD_FOLDER
 cd ../
+rm -f kval.tar.gz
 
-jx package kval.js -name "$NAME" -company "$COMPANY" -author "$AUTHOR" -copyright "$YEAR $AUTHOR" -extract true -native
+jx package $STAGING_FOLDER/kval.js -name "$NAME" -company "$COMPANY" -author "$AUTHOR" -copyright "$YEAR $AUTHOR" -extract true -native
 
-tar -czf kval.tar.gz kval
+tar -czf out/kval.tar.gz kval
+mv -f kval ... kval/
+mv -f kval.jx ... kval/
+mv -m kval.jxp ... kval/
