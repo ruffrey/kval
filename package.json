@@ -1,6 +1,6 @@
 {
   "name": "kval",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "The thoughtless datastore. Easy to use, easy to scale.",
   "main": "db.js",
   "scripts": {
