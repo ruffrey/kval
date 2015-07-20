@@ -91,7 +91,6 @@ describe('net stability', function () {
         }, function (err) {
             should.not.exist(err);
             c.ping('hey', function (err, res) {
-                console.log(err, res);
                 should.exist(err);
                 should.exist(err.status);
                 err.status.should.equal(401);

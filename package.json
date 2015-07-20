@@ -8,11 +8,7 @@
     "debug-test": "DEBUG=kval* mocha test/**/*.test.js",
     "cover": "mocha -r blanket -R html-cov > coverage.html test/**/*.test.js; open coverage.html",
     "bench": "mocha test/**/*.bench.js",
-    "local": "DEBUG=kval* nodemon kval.js --webapp=3008 --password=asdf",
-    "start": "DEBUG=kval* node kval.js",
-    "webapp": "DEBUG=kval* nodemon kval.js",
-    "compile": "sudo sh compile",
-    "native": "sudo ./build/kval --port=9222 --password=asdf --path=/Users/jpx/kval/db --workers=3"
+    "start": "DEBUG=kval* node kval.js"
   },
   "config": {
     "blanket": {

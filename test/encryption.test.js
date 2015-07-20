@@ -8,7 +8,6 @@ xdescribe('encryption', function () {
                 var val;
                 while (i--) {
                     val = encryption.uid(len);
-                    // console.log(val);
                     val.length.should.equal(len);
                 }
             }
