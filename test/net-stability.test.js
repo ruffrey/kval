@@ -62,7 +62,6 @@ describe('net stability', function () {
             port: 9226,
             password: 'not-matching'
         }, function (err) {
-            console.log('HI', err);
             should.exist(err.status);
             err.status.should.equal(401);
             err.message.indexOf('password').should.not.equal(-1);

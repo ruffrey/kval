@@ -18,7 +18,7 @@ describe('Db', function () {
     });
     describe('initialization dir creation', function () {
         before(function () {
-            testdir = path.resolve(__dirname +  '/../build/' + Math.random().toString(36).substring(2, 9));
+            testdir = path.resolve(__dirname +  '/../db/' + Math.random().toString(36).substring(2, 9));
         });
         after(function (done) {
             rimraf(testdir, done);
