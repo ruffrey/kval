@@ -1,6 +1,6 @@
 {
   "name": "kval",
-  "version": "0.11.2",
+  "version": "0.11.7",
   "description": "The thoughtless datastore. Easy to use, easy to scale.",
   "main": "kval.js",
   "scripts": {
@@ -8,8 +8,7 @@
     "debug-test": "DEBUG=kval* mocha test/**/*.test.js",
     "cover": "mocha -r blanket -R html-cov > coverage.html test/**/*.test.js; open coverage.html",
     "bench": "mocha test/**/*.bench.js",
-    "start": "DEBUG=kval* node worker.js",
-    "dev-install": "sudo npm i -g ."
+    "start": "DEBUG=kval* node worker.js"
   },
   "config": {
     "blanket": {

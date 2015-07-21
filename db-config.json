@@ -1,0 +1,13 @@
+[{
+    "name": "kval",
+    "script": "worker.js",
+    "exec_mode": "cluster",
+    "instances": 2,
+    "env": {
+        "host": "127.0.0.1"
+        "port": "9226",
+        "path": "kval-db"
+        "mapSize": "268435456000"
+    },
+    "max_memory_restart": "320MB"
+}]

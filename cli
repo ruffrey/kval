@@ -2,30 +2,31 @@
 'use strict';
 var async = require('async');
 var version = require('./package.json').version;
-function getUserHome() {
-    return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
-}
-var args = {
-    host: '127.0.0.1',
-    port: 9226,
-    path: getUserHome() + '/kval-db',
-    workers: 2,
-    maxDbSizeBytes: 250 * 1024 * 1024 * 1024,
-    workerMemory: '320M'
-};
-var pm2 = require('pm2');
-
+var pm2bin = __dirname + '/node_modules/pm2/bin/pm2';
+var exec = require('child_process').execFile;
 var availableActions = ['start', 'stop', 'help', 'version'];
 var action = process.argv[2];
+function onDone(err, apps) {
+    if (err) {
+        console.error(err.message, err.stack, err);
+        throw err;
+    }
+    process.stdout.write('success.');
+}
+function save(cb) {
+    setTimeout(function () {
+        exec(pm2bin, ['save'], cb);
+    }, 1000);
+}
+
 if (!~availableActions.indexOf(action)) {
     console.error('First argument is invalid. Choose from:', availableActions.join(','));
     console.error(process.argv);
     return;
 }
-
 if (action === 'help') {
     console.log('\nUsage:')
-    console.log('\n  $  kval [', availableActions.join(','), '] --[option]');
+    console.log('\n  $  kval [', availableActions.join(','), ']');
     console.log('\nOptions (defaults shown)');
     Object.keys(args).forEach(function (name) {
         console.log(' ', '--' + name + '=' + args[name]);
@@ -37,65 +38,28 @@ if (action === 'version') {
     return;
 }
 
-// Parse args
-var argv = process.argv;
-var arg;
-var spl;
-var key;
-var val;
-for (var i = 2; i < argv.length; i++) {
-    arg = argv[i];
-    arg = arg.replace('--', '');
-    spl = arg.split('=');
-    key = spl[0];
-    val = spl[1];
-    args[key] = val;
+switch (action) {
+    case 'start':
+        console.log('starting...');
+        async.series([
+            function (cb) {
+                exec(pm2bin, ['start', 'app.json'], cb);
+            },
+            function (cb) {
+                setTimeout(function () {
+                    exec(pm2bin, ['startup'], cb);
+                }, 2000);
+            },
+            save
+        ], onDone);
+    break;
+    case 'stop':
+        console.log('stopping...');
+        async.series([
+            function (cb) {
+                pm2.stop('kval', cb);
+            },
+            save
+        ], onDone);
+    break;
 }
-
-function onDone(err, apps) {
-    if (err) {
-        console.error(err.message, err.stack);
-        throw err;
-    }
-    console.log('success.');
-    pm2.disconnect();
-}
-
-pm2.connect(function () {
-    switch (action) {
-        case 'start':
-            console.log('db args', args);
-            console.log('starting...');
-            async.series([
-                function (cb) {
-                    pm2.start({
-                        name: 'kval',
-                        script: 'worker.js',
-                        exec_mode: 'cluster',
-                        instances: args.workers,
-                        env: {
-                            KVAL_WORKER_HOST: args.host,
-                            KVAL_WORKER_POST: args.port,
-                            KVAL_WORKER_PATH: args.path,
-                            KVAL_WORKER_MAPSIZE: args.maxDbSizeBytes
-                        },
-                        max_memory_restart: args.workerMemory
-                    }, cb);
-                },
-                function (cb) {
-                    pm2.startup(process.platform, { user: process.getuid() }, cb);
-                },
-                pm2.dump
-            ], onDone);
-        break;
-        case 'stop':
-            console.log('stopping...');
-            async.series([
-                function (cb) {
-                    pm2.stop('kval', cb);
-                },
-                pm2.dump
-            ], onDone);
-        break;
-    }
-});

@@ -19,3 +19,4 @@ new Db().initialize(env, function (err) {
         throw err;
     }
 });
+process.stdin.resume();
