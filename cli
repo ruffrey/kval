@@ -43,7 +43,7 @@ switch (action) {
         console.log('starting...');
         async.series([
             function (cb) {
-                exec(pm2bin, ['start', 'app.json'], cb);
+                exec(pm2bin, ['start', __dirname + '/db-config.json'], cb);
             },
             function (cb) {
                 setTimeout(function () {
