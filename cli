@@ -57,7 +57,7 @@ switch (action) {
         console.log('stopping...');
         async.series([
             function (cb) {
-                pm2.stop('kval', cb);
+                exec(pm2bin, ['stop', 'kval'], cb);
             },
             save
         ], onDone);
