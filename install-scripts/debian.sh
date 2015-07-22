@@ -4,7 +4,11 @@ apt-get update
 apt-get install git curl build-essential python2.7 # for building native node modules
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | bash
 source ~/.bashrc
-nvm install 0.12.5
+nvm install node
 node --version
-npm install -g kval pm2
-kval start
+npm install -g pm2
+git clone https://bitbucket.org/ruffrey/kval.git ~/kval
+cd kval
+npm i
+pm2 start db-config.json
+pm2 startup
