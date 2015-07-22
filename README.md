@@ -43,18 +43,20 @@ Example default config file:
 
 ```json
 {
-    "name": "kval",
-    "script": "worker.js",
-    "exec_mode": "cluster",
-    "instances": 2,
-    "env": {
-        "host": "127.0.0.1",
-        "port": "9226",
-        "path": "kval-db",
-        "mapSize": "268435456000",
-        "password": ""
-    },
-    "max_memory_restart": "320M"
+    "apps": [{
+        "name": "kval",
+        "script": "worker.js",
+        "exec_mode": "cluster",
+        "instances": 2,
+        "env": {
+            "KVAL_WORKER_HOST": "127.0.0.1",
+            "KVAL_WORKER_PORT": 9226,
+            "KVAL_WORKER_DB_PATH": "kval-db",
+            "KVAL_WORKER_DB_MAX_SIZE_BYTES": 268435456000,
+            "KVAL_WORKER_PASSWORD": ""
+        },
+        "max_memory_restart": "320M"
+    }]
 }
 ```
 
