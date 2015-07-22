@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha test/**/*.test.js",
     "debug-test": "DEBUG=kval* mocha test/**/*.test.js",
-    "cover": "mocha -r blanket -R html-cov > coverage.html test/**/*.test.js; open coverage.html",
+    "cover": "mocha -r blanket -R html-cov > build/coverage.html test/**/*.test.js; open build/coverage.html",
     "bench": "mocha test/**/*.bench.js",
     "start": "DEBUG=kval* node worker.js"
   },

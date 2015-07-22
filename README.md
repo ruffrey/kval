@@ -23,6 +23,7 @@ kval uses a mongoose-like API.
 1. Terminal: `kval start` (required elevated privileges)
     - a full list of options can be seen by running `kval help`
 
+
 This will install the database, keep it up on server reboots. By default
 it listens on `127.0.0.1:9226`.
 
