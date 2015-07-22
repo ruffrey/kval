@@ -35,8 +35,7 @@
     "async": "^1.4.0",
     "debug": "^2.2.0",
     "dnode": "^1.2.1",
-    "node-lmdb": "^0.3.0",
-    "pm2": "^0.14.3"
+    "node-lmdb": "^0.3.0"
   },
   "devDependencies": {
     "blanket": "^1.1.7",
