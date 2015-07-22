@@ -27,7 +27,10 @@ This will install the database, keep it up on server reboots. By default
 it listens on `127.0.0.1:9226`.
 
 To be accessible externally, the port will need to be opened in your
-firewall, and you must listen on a public IP.
+firewall, and you must listen on a public IP by adding it in the config file.
+
+To **stop**, do `kval stop`. This will prevent it from automatically starting
+when the server starts.
 
 ### Config file
 
@@ -39,7 +42,7 @@ See the config file inside the installation: `db-config.json`.
 Example default config file:
 
 ```json
-[{
+{
     "name": "kval",
     "script": "worker.js",
     "exec_mode": "cluster",
@@ -52,7 +55,7 @@ Example default config file:
         "password": ""
     },
     "max_memory_restart": "320M"
-}]
+}
 ```
 
 (if this looks familiar, it is a pm2 process file)

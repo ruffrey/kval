@@ -1,4 +1,4 @@
-[{
+{
     "name": "kval",
     "script": "worker.js",
     "exec_mode": "cluster",
@@ -11,4 +11,4 @@
         "password": ""
     },
     "max_memory_restart": "320M"
-}]
+}
