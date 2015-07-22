@@ -60,7 +60,9 @@ Example default config file:
 }
 ```
 
-(if this looks familiar, it is a pm2 process file)
+If this looks familiar, it is a pm2 process file. The full list of options
+can be seen in the
+[pm2 app declaration docs](https://github.com/Unitech/PM2/blob/master/ADVANCED_README.md#options-1).
 
 
 ## Node.js client usage
