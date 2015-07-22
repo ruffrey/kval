@@ -45,15 +45,14 @@ Example default config file:
     "exec_mode": "cluster",
     "instances": 2,
     "env": {
-        "host": "127.0.0.1"
+        "host": "127.0.0.1",
         "port": "9226",
-        "path": "kval-db"
+        "path": "kval-db",
         "mapSize": "268435456000",
         "password": ""
     },
-    "max_memory_restart": "320MB"
+    "max_memory_restart": "320M"
 }]
-
 ```
 
 (if this looks familiar, it is a pm2 process file)
