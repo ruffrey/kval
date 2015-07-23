@@ -5,7 +5,7 @@
         "exec_mode": "cluster",
         "instances": 2,
         "env": {
-            "KVAL_WORKER_HOST": "127.0.0.1",
+            "KVAL_WORKER_HOST": "0.0.0.0",
             "KVAL_WORKER_PORT": 9226,
             "KVAL_WORKER_DB_PATH": "db",
             "KVAL_WORKER_DB_MAX_SIZE_BYTES": 268435456000,
