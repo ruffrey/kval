@@ -1,4 +1,4 @@
-# kval (under construction)
+# kval - under construction
 
 A simplistic and easy to scale JSON document datastore.
 
@@ -13,7 +13,27 @@ A simplistic and easy to scale JSON document datastore.
     - peer pub-sub
     - add and remove peers
 
-kval uses a mongoose-like API.
+kval uses a Node.js Mongoose-like API.
+
+## Quickstart
+
+## Install on Debian / Ubuntu
+
+```bash
+curl https://bitbucket.org/ruffrey/kval/raw/7c1231ff2e29aca14b5ff073d6eaba923fdfa20f/install-scripts/debian.sh | bash
+```
+
+This will install into the current folder, running on **port 9226**.
+
+Inside the installation directory, you may wish to edit the `db-config.json`
+file.
+
+## Start/stop/restart
+
+[pm2] is the recommended tool to manage the process. It is installed when
+following the quickstart script above.
+
+
 
 ## Datastore setup
 
@@ -41,13 +61,13 @@ Example default config file:
         "exec_mode": "cluster",
         "instances": 2,
         "env": {
-            "KVAL_WORKER_HOST": "127.0.0.1",
+            "KVAL_WORKER_HOST": "0.0.0.0",
             "KVAL_WORKER_PORT": 9226,
-            "KVAL_WORKER_DB_PATH": "kval-db",
+            "KVAL_WORKER_DB_PATH": "db",
             "KVAL_WORKER_DB_MAX_SIZE_BYTES": 268435456000,
             "KVAL_WORKER_PASSWORD": ""
         },
-        "max_memory_restart": "320M"
+        "max_memory_restart": "256M"
     }]
 }
 ```

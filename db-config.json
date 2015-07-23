@@ -11,6 +11,6 @@
             "KVAL_WORKER_DB_MAX_SIZE_BYTES": 268435456000,
             "KVAL_WORKER_PASSWORD": ""
         },
-        "max_memory_restart": "320M"
+        "max_memory_restart": "256M"
     }]
 }
