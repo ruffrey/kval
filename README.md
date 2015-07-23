@@ -17,7 +17,7 @@ kval uses a Node.js Mongoose-like API.
 
 ## Quickstart
 
-## Install on Debian / Ubuntu
+## Install on Ubuntu
 
 ```bash
 curl https://bitbucket.org/ruffrey/kval/raw/7c1231ff2e29aca14b5ff073d6eaba923fdfa20f/install-scripts/debian.sh | bash
