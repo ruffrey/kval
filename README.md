@@ -6,82 +6,62 @@ A simplistic and easy to scale JSON document datastore.
     - see [LMDB benchmarks](http://symas.com/mdb/#bench) upon which it is built
 - ACID compliant - supports transactions
 - persistent
-- larger-than-memory
-- JSON document store
-- scale to over 1 billion records
+- store size can be larger than memory
+- JSON store supporting very large documents
+- a single instance scales to over 1 billion records
 - Peering (coming soon)
     - peer pub-sub
-    - add and remove peers
+    - eventual consistency
+    - adds redundancy and horizontal traffic capacity
+
+## Goals
+
+- one-line install and fast setup with no prior knowledge
+- add redundancy in minutes
+- minimal APIs to learn
+- APIs that are familiar to NoSQL developers
+- should be usable for minimum viable products that don't want to worry about scaling for a while
+- small, well tested, maintainable codebase with few dependencies
 
 kval uses a simplified Node.js Mongoose-like API.
 
 ## Quickstart
 
 kval is a Node.js app with bindings to LMDB, so it can be run in a lot of ways,
-including `require`d into a Node.js project.
+including `require`d into a Node.js project (see instructions below for *Embedding*).
 
 Below are instructions for running it as an independent service.
 
 ### Install on Ubuntu
 
 ```bash
-curl https://bitbucket.org/ruffrey/kval/raw/7c1231ff2e29aca14b5ff073d6eaba923fdfa20f/install-scripts/debian.sh | bash
+curl https://storage.googleapis.com/kval/ubuntu.sh | bash
 ```
 
-This will install into the current folder, running on **port 9226**.
+### Running on OSX
 
-Inside the installation directory, you may wish to edit the `db-config.json`
-file.
+There is no installation script. For now you can run it as a Node.js app.
 
-## Start/stop/restart
-
-[pm2](https://github.com/Unitech/PM2) is the recommended tool to manage the
-database process. It is installed when following the quickstart script above.
-
-* [pm2 process management documentation](https://github.com/Unitech/PM2)
-
-
-## Datastore setup
-
-At it's core this is a Node.js app, so running it is
-
-We recommend pm2 for running and keeping it up.
-
-More instructions coming soon, see `install-scripts/` for examples of
-production deployment.
-
-### Config file - db-config.js
-
-The database will be installed in the `kval` folder of your global node_modules.
-Run `npm list -g` to see where node_modules are installed.
-
-See the config file inside the installation: `db-config.json`.
-
-Example default config file:
-
-```json
-{
-    "apps": [{
-        "name": "kval",
-        "script": "worker.js",
-        "exec_mode": "cluster",
-        "instances": 2,
-        "env": {
-            "KVAL_WORKER_HOST": "0.0.0.0",
-            "KVAL_WORKER_PORT": 9226,
-            "KVAL_WORKER_DB_PATH": "db",
-            "KVAL_WORKER_DB_MAX_SIZE_BYTES": 268435456000,
-            "KVAL_WORKER_PASSWORD": ""
-        },
-        "max_memory_restart": "256M"
-    }]
-}
+```bash
+git clone <TODO: INSERT REPOSITORY>
+cd kval && npm i --production
+node worker.js
 ```
 
-If this looks familiar, it is a pm2 process file. The full list of options
-can be seen in the
-[pm2 app declaration docs](https://github.com/Unitech/PM2/blob/master/ADVANCED_README.md#options-1).
+## Advanced setup
 
+At it's core this is a Node.js app, so running it is up to you. There are a
+variety of way to run Node.js apps.
+
+kval uses environment variables for its configuration.
+
+```bash
+KVAL_WORKER_HOST=0.0.0.0
+KVAL_WORKER_PORT=9226
+KVAL_WORKER_DB_PATH=/path/to/db/files
+KVAL_WORKER_DB_MAX_SIZE_BYTES=524288000 # 500 MiB
+KVAL_WORKER_PASSWORD="secret-stuff"
+```
 
 ## Node.js client usage
 
@@ -128,12 +108,16 @@ var user = new User({ name: 'Bill', age: 32, libraryCard: 'A-55555' });
 
 console.log(user.id); // auto generated id field
 
-user.save(function (err, savedUser) {
+user.save(function callback(err, savedUser) {
     if (err) {
         console.error(err.message);
         return;
     }
     console.log('User was saved', savedUser);
+    savedUser.age++;
+    savedUser.save(function (err) {
+        console.log('User got old');
+    });
 });
 ```
 
@@ -141,7 +125,7 @@ user.save(function (err, savedUser) {
 
 ```javascript
 User.findById(id, callback);
-User.find(id, callback);
+User.find({ someIndex: 'someValue' }, callback);
 ```
 
 ### Deleting
@@ -156,8 +140,107 @@ User.findById('Yrei32kLisd9gaknbl9akNyr', function (err, user) {
 });
 ```
 
-### Other languages
+## Other languages
 
 Drivers for other languages have not been added yet. Please open an issue
 if you are interested in support for a language other than Node, or if you
 created one and would like us to list it here.
+
+## Architecture and protocol
+
+kval is a thin layer over the LMDB keystore:
+
+- a simple database management system (dbms) for storing JSON
+documents
+- a pre-shared password auth scheme
+    - two step handshake to establish a secure session
+    - subsequent requests are fully encrypted
+- RPC protocol over TCP
+    - uses [dnode, which supports many languages](https://github.com/substack/dnode#dnode-in-other-languages)
+
+### Embedding
+
+kval can be embedded in a Node.js application.
+
+```javascript
+var Dbms = require('kval').Dbms;
+var db = new Dbms();
+var options = {
+    host: '0.0.0.0',
+    port: 9226,
+    path: 'path/to/db',
+    mapSize: 1024 * 1024 * 1024 * 50, // Max db size in bytes
+    password: 'not-a-secret'
+};
+db.initialize(options, function callback(err) {
+
+});
+```
+
+Real examples of embedding can be seen in most of the tests - see the `test/` folder.
+
+## keys / ID / `.id` field
+
+`id`s must be unique, as this is a key-value store at its heart, with JSON
+documents as the values.
+
+The key can be any JSON type.
+
+By default the Node.js client library will assign keys when they are not
+specified. The default `ids` are
+**24 character pseudo-random case-sensitive alphanumeric strings** which should guarantee uniqueness.
+
+## Backups
+
+Backup the `data.mdb` and `lock.mdb` files in your `KVAL_WORKER_DB_PATH`.
+
+To restore, put the two files back into the `KVAL_WORKER_DB_PATH`.
+
+## Benchmarks
+
+Benchmarks for basic CRUD and other scenarios are in the `test/benchmarks/` folder. Having multiple instances of `worker.js` would improve benchmarks (i.e. using Node.js cluster).
+
+
+Run benchmarks with
+```bash
+npm run bench
+```
+
+## Tests
+
+```bash
+npm test
+```
+
+Test coverage can be seen by running
+```bash
+npm run cover
+```
+
+The coverage goal is at least 90%, currently at about 70%.
+
+
+## Work list
+
+- peering with pub-sub
+- client multi-connection pooling
+- finish queries
+- test 1 billion records
+- example REST api app
+- `$inc` ability on integer fields
+- schema validation
+
+
+# Licensing
+
+### kval
+
+MIT
+
+See LICENSE file in the repository
+
+### LMDB
+OpenLDAP's BSD-style license
+
+### Other dependencies
+See deps in `package.json` to track licenses

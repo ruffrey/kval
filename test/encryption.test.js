@@ -1,6 +1,6 @@
 var should = require('should');
 var encryption = require('../lib/encryption');
-xdescribe('encryption', function () {
+describe('encryption', function () {
     describe('uid', function () {
         it('should generate values at specified lengths', function () {
             function testLength(len) {
