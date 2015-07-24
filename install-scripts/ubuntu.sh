@@ -46,5 +46,7 @@ echo "$LOGROTATE_CONFIG" | sudo tee --append "$LOGROTATE_FILE"
 init-checkconf -d /etc/init/kval.conf
 sudo service kval start
 
-echo Success - installed at /opt/kval
-echo Configurations maybe be edited at $CONF_FILE, then run \'sudo service kval restart\'
+echo \nSuccess - installed at /opt/kval
+echo Edit configuration at $CONF_FILE, then run \'sudo service kval restart\'
+echo Check startup logs at /var/log/upstart/kval.log
+echo Check kval dbms server logs at $LOG_FILE
