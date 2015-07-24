@@ -8,5 +8,5 @@ cd /opt
 git clone https://bitbucket.org/ruffrey/kval.git kval --force
 cd kval
 npm i --production
-sudo cp -f psy2.conf /etc/init
-sudo chmod +x /etc/init/psy2.conf
+sudo cp -f kval.conf /etc/init
+sudo chmod +x /etc/init/kval.conf
