@@ -220,16 +220,16 @@ npm run cover
 The coverage goal is at least 90%, currently at about 70%.
 
 
-## Work list
+## Work list to v1.0.0
 
 - peering with pub-sub
 - client multi-connection pooling
 - finish queries
 - test 1 billion records
-- example REST api app
-- `$inc` ability on integer fields
+- increment ability on integer fields
 - schema validation
-
+- bulk create, update, and delete
+- list dbis (collections)
 
 # Licensing
 
@@ -240,7 +240,7 @@ MIT
 See LICENSE file in the repository
 
 ### LMDB
-OpenLDAP's BSD-style license
+OpenLDAP Public License
 
 ### Other dependencies
 See deps in `package.json` to track licenses
