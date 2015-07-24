@@ -35,7 +35,8 @@ Below are instructions for running it as an independent service.
 ### Install on Ubuntu
 
 ```bash
-curl https://storage.googleapis.com/kval/ubuntu.sh | bash
+curl https://storage.googleapis.com/kval/ubuntu.sh -o kval-install.sh
+sh kval-install.sh
 ```
 
 ### Running on OSX
