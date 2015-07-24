@@ -3,7 +3,7 @@
 CONF_DIR=/etc/init
 CONF_FILE=$CONF_DIR/kval.conf
 LOG_DIR=/var/log/kval
-LOG_FILE=$LOG_DIR/kval.log
+LOG_FILE="$LOG_DIR/kval.log"
 LOGROTATE_FILE=/etc/logrotate.d/kval
 LOGROTATE_CONFIG="$LOG_FILE {
     weekly
