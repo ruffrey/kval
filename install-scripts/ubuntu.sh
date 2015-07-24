@@ -42,5 +42,9 @@ touch $LOG_FILE
 sudo rm -f $LOGROTATE_FILE
 echo "$LOGROTATE_CONFIG" | sudo tee --append "$LOGROTATE_FILE"
 
+# Ensure proper syntax and load the conf
+init-checkconf -d /etc/init/kval.conf
+sudo service kval start
+
 echo Success - installed at /opt/kval
-echo Configurations maybe be edited at $CONF_FILE
+echo Configurations maybe be edited at $CONF_FILE, then run \'sudo service kval restart\'
