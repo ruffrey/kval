@@ -1,12 +1,46 @@
 #! /usr/bin/env bash
 
-sudo apt-get update -y
-sudo apt-get install -y git curl build-essential python2.7
-curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -
-sudo apt-get install -y nodejs
-cd /opt
-git clone https://bitbucket.org/ruffrey/kval.git kval --force
-cd kval
-npm i --production
-sudo cp -f kval.conf /etc/init
-sudo chmod +x /etc/init/kval.conf
+CONF_DIR=/etc/init
+CONF_FILE=$CONF_DIR/kval.conf
+LOG_DIR=/var/log/kval
+LOG_FILE=$LOG_DIR/kval.log
+LOGROTATE_FILE=/etc/logrotate.d/kval
+LOGROTATE_CONFIG="$LOG_FILE {
+    weekly
+    rotate 26
+    size 10M
+    create
+    su root
+    compress
+    delaycompress
+    postrotate
+        service kval restart > /dev/null
+    endscript
+}
+"
+
+
+curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -;
+sudo --silent apt-get install --yes git build-essential python2.7;
+sudo apt-get install --yes nodejs;
+
+# Clone and setup the application
+cd /opt;
+rm -rf kval;
+sudo git clone https://bitbucket.org/ruffrey/kval.git kval --depth 1;
+cd kval;
+sudo npm i --production;
+
+# Setup init scripts
+sudo rm -f $CONF_FILE
+sudo cp -f install-scripts/kval.conf $CONF_DIR;
+sudo chmod +x $CONF_FILE;
+
+# Setup log rotation
+mkdir -p $LOG_DIR
+touch $LOG_FILE
+sudo rm -f $LOGROTATE_FILE
+echo "$LOGROTATE_CONFIG" | sudo tee --append "$LOGROTATE_FILE"
+
+echo Success - installed at /opt/kval
+echo Configurations maybe be edited at $CONF_FILE
