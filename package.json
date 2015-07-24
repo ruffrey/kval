@@ -2,7 +2,7 @@
   "name": "kval",
   "version": "0.12.11",
   "description": "The thoughtless datastore. Easy to use, easy to scale.",
-  "main": "kval.js",
+  "main": "index.html",
   "scripts": {
     "test": "mocha test/**/*.test.js",
     "debug-test": "DEBUG=kval* mocha test/**/*.test.js",
@@ -25,7 +25,7 @@
   "author": "Jeff Parrish <jeffhparrish@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "0.12.5"
+    "node": ">=0.12.0"
   },
   "dependencies": {
     "async": "^1.4.0",

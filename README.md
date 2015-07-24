@@ -13,11 +13,16 @@ A simplistic and easy to scale JSON document datastore.
     - peer pub-sub
     - add and remove peers
 
-kval uses a Node.js Mongoose-like API.
+kval uses a simplified Node.js Mongoose-like API.
 
 ## Quickstart
 
-## Install on Ubuntu
+kval is a Node.js app with bindings to LMDB, so it can be run in a lot of ways,
+including `require`d into a Node.js project.
+
+Below are instructions for running it as an independent service.
+
+### Install on Ubuntu
 
 ```bash
 curl https://bitbucket.org/ruffrey/kval/raw/7c1231ff2e29aca14b5ff073d6eaba923fdfa20f/install-scripts/debian.sh | bash
@@ -30,9 +35,10 @@ file.
 
 ## Start/stop/restart
 
-[pm2] is the recommended tool to manage the process. It is installed when
-following the quickstart script above.
+[pm2](https://github.com/Unitech/PM2) is the recommended tool to manage the
+database process. It is installed when following the quickstart script above.
 
+* [pm2 process management documentation](https://github.com/Unitech/PM2)
 
 
 ## Datastore setup
@@ -44,7 +50,7 @@ We recommend pm2 for running and keeping it up.
 More instructions coming soon, see `install-scripts/` for examples of
 production deployment.
 
-### Config file
+### Config file - db-config.js
 
 The database will be installed in the `kval` folder of your global node_modules.
 Run `npm list -g` to see where node_modules are installed.
