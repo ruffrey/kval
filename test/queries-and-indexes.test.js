@@ -60,10 +60,14 @@ describe.only('Queries and indexing', function () {
         var user = new User({ name: 'Bill', age: 32, email: 'asdf@example.com' });
         user.save(function (err) {
             should.not.exist(err);
-            User.findOne({ email: 'asdf@example.com' }, function (err, doc) {
+            User.find({ email: 'asdf@example.com' }, function (err, docs) {
                 should.not.exist(err);
-                should.exist(doc);
-                doc.should.be.an.Object().and.have.prop('id').and.have.prop('email');
+                console.log(docs);
+                should.exist(docs);
+                var doc = docs[0];
+                doc.should.be.an.Object().and.not.an.Array();
+                doc.should.have.property('id');
+                doc.should.have.property('email');
                 doc.email.should.equal('asdf@example.com');
                 done();
             });
