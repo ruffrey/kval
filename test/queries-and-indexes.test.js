@@ -15,7 +15,7 @@ var Model = required.Model;
 var client;
 var User;
 
-describe.only('Queries and indexing', function () {
+xdescribe('Queries and indexing', function () {
     before(function (done) {
         async.series([
             function (cb) {
@@ -61,6 +61,28 @@ describe.only('Queries and indexing', function () {
         user.save(function (err) {
             should.not.exist(err);
             User.find({ email: 'asdf@example.com' }, function (err, docs) {
+                should.not.exist(err);
+                console.log(docs);
+                should.exist(docs);
+                docs.should.be.an.Array();
+                var doc = docs[0];
+                doc.should.be.an.Object().and.not.an.Array();
+                doc.should.have.property('id');
+                doc.should.have.property('email');
+                doc.email.should.equal('asdf@example.com');
+                done();
+            });
+        });
+    });
+    it('is queryable for a single document by index', function (done) {
+        var user1 = new User({ name: 'Bill', age: 32, email: 'bill@example.com' });
+        var user2 = new User({ name: 'Joe', age: 32, email: 'joe@example.com' });
+        async.parallel([
+            function (cb) { user1.save(cb); },
+            function (cb) { user2.save(cb); }
+        ], function (err) {
+            should.not.exist(err);
+            User.findOne({ age: 32 }, function (err, docs) {
                 should.not.exist(err);
                 console.log(docs);
                 should.exist(docs);
