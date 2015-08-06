@@ -1,6 +1,6 @@
-# kval - under construction
+# kval - under construction / unfinished
 
-A simplistic and easy to scale JSON document datastore.
+A simplistic and easy to scale JSON document datastore. (experimental)
 
 - wickedly fast
     - see [LMDB benchmarks](http://symas.com/mdb/#bench) upon which it is built
@@ -33,6 +33,8 @@ including `require`d into a Node.js project (see instructions below for *Embeddi
 Below are instructions for running it as an independent service.
 
 ### Install on Ubuntu
+
+(link tbd)
 
 ```bash
 curl https://storage.googleapis.com/kval/ubuntu.sh -o kval-install.sh
