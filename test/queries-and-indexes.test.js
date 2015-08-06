@@ -15,7 +15,7 @@ var Model = required.Model;
 var client;
 var User;
 
-describe.only('Queries and indexing', function () {
+describe('Queries and indexing', function () {
     before(function (done) {
         async.series([
             function (cb) {
